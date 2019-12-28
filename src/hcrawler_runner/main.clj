@@ -32,7 +32,9 @@
 (defn download [post]
   (case (:type post)
     :image (download-image post)
-    :video (download-video post)))
+    :video (download-video post)
+    :carousel (doseq [media (:medias post)]
+                (download (assoc media :username (:username post))))))
 
 (defn in [ch {:keys [content-type delivery-tag type] :as meta} ^bytes payload]
   (let [json-str (String. payload "UTF-8")
@@ -41,7 +43,7 @@
     (download file-desc)))
 
 (defn wrap_int [in]
-  (let [conn (rmq/connect {:host rabbit-host})
+  (let [conn (rmq/connect {:host rabbit-host :port 30672})
         ch (lch/open conn)
         qname "instagram"]
     (lq/declare ch qname {:exclusive false :auto-delete false})
