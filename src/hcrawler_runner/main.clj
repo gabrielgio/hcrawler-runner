@@ -41,7 +41,7 @@
     (download file-desc)))
 
 (defn wrap_int [in]
-  (let [conn (rmq/connect {:host rabbit-host :port 30672})
+  (let [conn (rmq/connect {:host rabbit-host})
         ch (lch/open conn)
         qname "instagram"]
     (lq/declare ch qname {:exclusive false :auto-delete false})
