@@ -1,7 +1,9 @@
 pipeline {
     agent { 
-        docker 'gabrielgio/clojure' 
-        args '-v $HOME/.m2:/root/.m2'
+        docker {
+            image 'gabrielgio/clojure' 
+            args '-v $HOME/.m2:/root/.m2'
+        }
     }
     stages {
         stage('Run test') {
