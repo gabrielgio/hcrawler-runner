@@ -28,6 +28,6 @@
 (defn extract-file [queue-item]
   (let [post (:post queue-item)
         media-type (:media_type post)]
-    (if (contains? [1 2] media-type)
-      (extract-file post)
+    (if (some (partial = media-type) [1 2])
+      (extract-single post)
       (extract-carousel post))))
