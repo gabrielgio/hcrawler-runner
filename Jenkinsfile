@@ -22,7 +22,7 @@ pipeline {
             agent any
             steps {
                 sh "docker push gabrielgio/hcrawler-runner:0.0.${env.BUILD_NUMBER}"
-                sh "docker push gabrielgio/hcrawler-runner:latest'
+                sh "docker push gabrielgio/hcrawler-runner:latest"
             }
         }   
     }
