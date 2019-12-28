@@ -8,7 +8,6 @@ pipeline {
     stages {
         stage('Run test') {
             steps {
-                sh 'whoami'
                 sh 'clojure -A:test'
             }
         }
