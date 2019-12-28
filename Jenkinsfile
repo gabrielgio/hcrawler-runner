@@ -2,7 +2,7 @@ pipeline {
     agent { 
         docker {
             image 'gabrielgio/clojure'
-            args '-u 1000:1000'
+            args '-v /var/lib/jenkins/workspace/hcrawler-runner:/var/lib/jenkins/workspace/hcrawler-runner'
         }
     }
     stages {
