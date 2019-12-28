@@ -15,7 +15,7 @@ pipeline {
         stage('Docker building') {
             agent any
             steps {
-                sh "docker build -t gabrielgio/hcrawler-runner:0.0.${env.BUILD_NUMBER} -t gabrielgio/hcrawler:latest ."
+                sh "docker build -t gabrielgio/hcrawler-runner:0.0.${env.BUILD_NUMBER} -t gabrielgio/hcrawler-runner:latest ."
             }
         }
         stage('Docker pushing') {
