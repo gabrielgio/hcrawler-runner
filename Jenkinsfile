@@ -2,6 +2,7 @@ pipeline {
     agent { 
         docker {
             image 'gabrielgio/clojure'
+            args '-e HOME=/root'
         }
     }
     stages {
