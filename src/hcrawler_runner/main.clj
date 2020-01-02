@@ -54,6 +54,6 @@
   :name hcrawler_runner.main
   :methods [[main [] String]])
 
-(defn main [& args]
+(defn -main [& args]
   (wrap_int in))
 
