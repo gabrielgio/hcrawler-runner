@@ -12,9 +12,10 @@
 (def rabbit-host (or (env :rabbit-host) "localhost"))
 
 (defn copy [uri file]
-  (with-open [in (io/input-stream uri)
-              out (io/output-stream file)]
-    (io/copy in out)))
+  (if (not (.exists (io/file file)))
+    (with-open [in (io/input-stream uri)
+                out (io/output-stream file)]
+      (io/copy in out))))
 
 (defn create-folder [username]
   (.mkdir (java.io.File. (str "out/" username))))
@@ -49,7 +50,10 @@
     (lq/declare ch qname {:exclusive false :auto-delete false})
     (lc/subscribe ch qname in {:auto-ack true})))
 
+(gen-class
+  :name hcrawler_runner.main
+  :methods [[main [] String]])
 
-(defn -main []
+(defn main [& args]
   (wrap_int in))
 
