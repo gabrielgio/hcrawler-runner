@@ -1,4 +1,4 @@
-FROM gabrielgio/clojure
+FROM clojure:openjdk-14-tools-deps-slim-buster
 
 WORKDIR /app
 
