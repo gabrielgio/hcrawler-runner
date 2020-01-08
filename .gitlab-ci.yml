@@ -1,11 +1,4 @@
-clojure-test:
-  image: clojure:openjdk-14-tools-deps-slim-buster
-  stage: test
-  script:
-    - clojure -Atest
-
 docker-build-master:
-  # Official docker image.
   image: docker:latest
   stage: build
   services:
@@ -19,7 +12,6 @@ docker-build-master:
     - master
 
 docker-build:
-  # Official docker image.
   image: docker:latest
   stage: build
   services:
@@ -31,3 +23,9 @@ docker-build:
     - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
   except:
     - master
+
+clojure-test:
+  image: clojure:openjdk-14-tools-deps-slim-buster
+  stage: test
+  script:
+    - clojure -Atest
