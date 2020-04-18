@@ -6,6 +6,8 @@
             [hcrawler-runner.core :refer [extract-file]]
             [langohr.core :as rmq]
             [langohr.channel :as lch]
+            [camel-snake-kebab.core :as csk]
+            '[cheshire.core :refer :all]
             [clj-http.client :as client]
             [langohr.queue :as lq]
             [langohr.consumers :as lc]))
@@ -40,12 +42,16 @@
     :carousel (doseq [media (:medias post)]
                 (download (assoc media :username (:username post))))))
 
+(defn create-payload [post]
+  {:form-params  (generate-string post {:key-fn (fn [x] (csk/->camelCase (name x)))})
+   :content-type :json})
+
 (defn request [post]
   (if (= http-enable "true")
     (if (some (partial = :type) [:video :image])
-      (client/post service-host {:form-params post} )
+      (client/post service-host (create-payload post))
       (doseq [media (:medias post)]
-        (client/post service-host {:form-params (merge post media)})))))
+        (client/post service-host (create-payload (merge post media)))))))
 
 (defn in [ch {:keys [content-type delivery-tag type] :as meta} ^bytes payload]
   (let [json-str (String. payload "UTF-8")
