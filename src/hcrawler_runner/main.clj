@@ -44,7 +44,7 @@
 
 (defn create-payload [post]
   {:body  (generate-string post {:key-fn (fn [x] (csk/->camelCase (name x)))})
-   :headers {"Content-Type" "application/json"}})
+   :content-type :json})
 
 (defn request [post]
   (if (= http-enable "true")
