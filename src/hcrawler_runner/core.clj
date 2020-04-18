@@ -1,17 +1,23 @@
 (ns hcrawler-runner.core
   (:require [environ.core :refer [env]])
-  (:import (java.util Date)
+  (:import (java.util Date TimeZone)
            (java.text SimpleDateFormat)))
 
 (def instagram-url "https://www.instagram.com")
+
+(defn convert-to-datetime [epoch]
+  (let [format (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+        datetime (Date. (* epoch 1000))
+        tz (TimeZone/getTimeZone "UTC")]
+    (.setTimeZone format tz)
+    (.format format datetime)))
 
 (defn merge-metadata [post data]
   (merge data {:post-url     (str instagram-url "/p/" (:code post))
                :profile-name (get-in post [:user :username])
                :profile-url  (str instagram-url "/" (get-in post [:user :username]))
                :source-name  "instagram"
-               :created-on   (.format (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-                                      (Date. (* (:taken_at post) 1000)))
+               :created-on   (convert-to-datetime (:taken_at post))
                :source-url   instagram-url}))
 
 (defn extract-video [post]
