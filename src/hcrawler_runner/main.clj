@@ -43,12 +43,12 @@
                 (download (assoc media :username (:username post))))))
 
 (defn create-payload [post]
-  {:body  (generate-string post {:key-fn (fn [x] (csk/->camelCase (name x)))})
+  {:body         (generate-string post {:key-fn (fn [x] (csk/->camelCase (name x)))})
    :content-type :json})
 
 (defn request [post]
   (if (= http-enable "true")
-    (if (some (partial = :type) [:video :image])
+    (if (some (partial = (:type post)) [:video :image])
       (client/post service-host (create-payload post))
       (doseq [media (:medias post)]
         (client/post service-host (create-payload (merge post media)))))))
