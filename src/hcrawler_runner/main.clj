@@ -7,7 +7,7 @@
             [langohr.core :as rmq]
             [langohr.channel :as lch]
             [camel-snake-kebab.core :as csk]
-            '[cheshire.core :refer :all]
+            [cheshire.core :refer :all]
             [clj-http.client :as client]
             [langohr.queue :as lq]
             [langohr.consumers :as lc]))
