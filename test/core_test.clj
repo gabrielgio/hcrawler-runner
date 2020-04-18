@@ -13,6 +13,12 @@
         queue-item (json/read-str json-str :key-fn keyword)]
     (extract-fn (:post queue-item))))
 
+
+(defn read! [filename extract-fn]
+  (let [json-str (slurp filename)
+        queue-item (json/read-str json-str :key-fn keyword)]
+    (extract-fn queue-item)))
+
 (deftest extract
   (testing "extract single video"
     (let [video (read-post! "test/data/video.json" extract-video)]
@@ -26,10 +32,29 @@
       (is (= :image (:type image)))
       (is (= "2195960449254306067_21933169435" (:id image)))
       (is (= "maple.pepe_" (:username image)))))
-  (testing "extract single file"
-    (let [image (read-post! "test/data/image.json" extract-single)
-          video (read-post! "test/data/video.json" extract-single)]
+  (testing "extract single file image"
+    (let [image (read! "test/data/image.json" extract-file)]
       (is (= :image (:type image)))
+      (is (= "instagram" (:source-name image)))
+      (is (= "https://www.instagram.com" (:source-url image)))
+      (is (= "maple.pepe_" (:profile-name image)))
+      (is (= "https://www.instagram.com/maple.pepe_" (:profile-url image)))
+      (is (= "https://www.instagram.com/p/B55nmTWnDET" (:post-url image)))))
+  (testing "extract single file carousel"
+    (let [carousel (read! "test/data/carousel.json" extract-file)]
+      (is (= :carousel (:type carousel)))
+      (is (= "instagram" (:source-name carousel)))
+      (is (= "https://www.instagram.com" (:source-url carousel)))
+      (is (= "maple.pepe_" (:profile-name carousel)))
+      (is (= "https://www.instagram.com/maple.pepe_" (:profile-url carousel)))
+      (is (= "https://www.instagram.com/p/B54dtEfANk-" (:post-url carousel)))))
+  (testing "extract single file video"
+    (let [video (read! "test/data/video.json" extract-file)]
+      (is (= "instagram" (:source-name video)))
+      (is (= "https://www.instagram.com" (:source-url video)))
+      (is (= "baesuicide" (:profile-name video)))
+      (is (= "https://www.instagram.com/baesuicide" (:profile-url video)))
+      (is (= "https://www.instagram.com/p/BTcffX1gw9V" (:post-url video)))
       (is (= :video (:type video)))))
   (testing "extract carousel"
     (let [carousel (read-post! "test/data/carousel.json" extract-carousel)]

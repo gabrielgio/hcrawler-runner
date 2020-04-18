@@ -1,6 +1,14 @@
 (ns hcrawler-runner.core
-  (:require [environ.core :refer [env]]
-            [clojure.data.json :as json]))
+  (:require [environ.core :refer [env]]))
+
+(def instagram-url "https://www.instagram.com")
+
+(defn merge-metadata [post data]
+  (merge data {:post-url     (str instagram-url "/p/" (:code post))
+               :profile-name (get-in post [:user :username])
+               :profile-url  (str instagram-url "/" (get-in post [:user :username]))
+               :source-name  "instagram"
+               :source-url   instagram-url}))
 
 (defn extract-video [post]
   {:url      (get-in post [:video_versions 0 :url])
@@ -25,9 +33,11 @@
    :username (get-in post [:user :username])
    :medias   (into-array (map extract-single (:carousel_media post)))})
 
+
 (defn extract-file [queue-item]
   (let [post (:post queue-item)
         media-type (:media_type post)]
-    (if (some (partial = media-type) [1 2])
-      (extract-single post)
-      (extract-carousel post))))
+    (merge-metadata post
+                    (if (some (partial = media-type) [1 2])
+                      (extract-single post)
+                      (extract-carousel post)))))

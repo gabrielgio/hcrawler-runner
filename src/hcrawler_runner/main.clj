@@ -5,11 +5,13 @@
             [hcrawler-runner.core :refer [extract-file]]
             [langohr.core :as rmq]
             [langohr.channel :as lch]
+            [clj-http.client :as client]
             [langohr.queue :as lq]
-            [langohr.consumers :as lc]
-            [langohr.basic :as lb]))
+            [langohr.consumers :as lc]))
 
 (def rabbit-host (or (env :rabbit-host) "localhost"))
+(def http-enable (or (env :http-enable) "false"))
+(def service-host (or (env :service-host) "http://localhost/image"))
 
 (defn copy [uri file]
   (if (not (.exists (io/file file)))
@@ -37,11 +39,19 @@
     :carousel (doseq [media (:medias post)]
                 (download (assoc media :username (:username post))))))
 
+(defn request [post]
+  (if (= http-enable "true")
+    (if (some (partial = :type) [:video :image])
+      (client/post service-host post)
+      (doseq [media (:medias post)]
+        (client/post service-host (merge post media))))))
+
 (defn in [ch {:keys [content-type delivery-tag type] :as meta} ^bytes payload]
   (let [json-str (String. payload "UTF-8")
         queue-item (json/read-str json-str :key-fn keyword)
         file-desc (extract-file queue-item)]
-    (download file-desc)))
+    (download file-desc)
+    (request file-desc)))
 
 (defn wrap_int [in]
   (let [conn (rmq/connect {:host rabbit-host})
