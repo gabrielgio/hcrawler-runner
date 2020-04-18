@@ -43,8 +43,8 @@
                 (download (assoc media :username (:username post))))))
 
 (defn create-payload [post]
-  {:form-params  (generate-string post {:key-fn (fn [x] (csk/->camelCase (name x)))})
-   :content-type :json})
+  {:body  (generate-string post {:key-fn (fn [x] (csk/->camelCase (name x)))})
+   :headers {"Content-Type" "application/json"}})
 
 (defn request [post]
   (if (= http-enable "true")
