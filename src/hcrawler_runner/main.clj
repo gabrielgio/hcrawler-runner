@@ -42,9 +42,9 @@
 (defn request [post]
   (if (= http-enable "true")
     (if (some (partial = :type) [:video :image])
-      (client/post service-host post)
+      (client/post service-host {:form-params post :content-type :json} )
       (doseq [media (:medias post)]
-        (client/post service-host (merge post media))))))
+        (client/post service-host {:form-params (merge post media) :content-type :json})))))
 
 (defn in [ch {:keys [content-type delivery-tag type] :as meta} ^bytes payload]
   (let [json-str (String. payload "UTF-8")
