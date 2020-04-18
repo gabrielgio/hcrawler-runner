@@ -1,4 +1,5 @@
 (ns hcrawler-runner.main
+  (:gen-class)
   (:require [environ.core :refer [env]]
             [clojure.data.json :as json]
             [clojure.java.io :as io]
@@ -42,9 +43,9 @@
 (defn request [post]
   (if (= http-enable "true")
     (if (some (partial = :type) [:video :image])
-      (client/post service-host {:form-params post :content-type :json} )
+      (client/post service-host {:form-params post} )
       (doseq [media (:medias post)]
-        (client/post service-host {:form-params (merge post media) :content-type :json})))))
+        (client/post service-host {:form-params (merge post media)})))))
 
 (defn in [ch {:keys [content-type delivery-tag type] :as meta} ^bytes payload]
   (let [json-str (String. payload "UTF-8")
