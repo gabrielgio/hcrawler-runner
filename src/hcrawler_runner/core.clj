@@ -1,5 +1,7 @@
 (ns hcrawler-runner.core
-  (:require [environ.core :refer [env]]))
+  (:require [environ.core :refer [env]])
+  (:import (java.util Date)
+           (java.text SimpleDateFormat)))
 
 (def instagram-url "https://www.instagram.com")
 
@@ -8,6 +10,8 @@
                :profile-name (get-in post [:user :username])
                :profile-url  (str instagram-url "/" (get-in post [:user :username]))
                :source-name  "instagram"
+               :created-on   (.format (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                                      (Date. (* (:taken_at post) 1000)))
                :source-url   instagram-url}))
 
 (defn extract-video [post]
