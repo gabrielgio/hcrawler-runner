@@ -43,7 +43,7 @@
                 (download (assoc media :username (:username post))))))
 
 (defn create-payload [post]
-  {:body         (generate-string post {:key-fn (fn [x] (csk/->camelCase (name x)))})
+  {:body         (generate-string (dissoc post [:medias]) {:key-fn (fn [x] (csk/->camelCase (name x)))})
    :content-type :json})
 
 (defn request [post]

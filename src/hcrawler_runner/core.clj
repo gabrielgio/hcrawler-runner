@@ -6,7 +6,7 @@
 (def instagram-url "https://www.instagram.com")
 
 (defn convert-to-datetime [epoch]
-  (let [format (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+  (let [format (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss")
         datetime (Date. (* epoch 1000))
         tz (TimeZone/getTimeZone "UTC")]
     (.setTimeZone format tz)
@@ -21,16 +21,18 @@
                :source-url   instagram-url}))
 
 (defn extract-video [post]
-  {:url      (get-in post [:video_versions 0 :url])
-   :id       (get-in post [:id])
-   :type     :video
-   :username (get-in post [:user :username])})
+  {:url        (get-in post [:video_versions 0 :url])
+   :id         (get-in post [:id])
+   :image-path (str "out/" (:username post) "/" (:id post) ".mp4")
+   :type       :video
+   :username   (get-in post [:user :username])})
 
 (defn extract-image [post]
-  {:url      (get-in post [:image_versions2 :candidates 0 :url])
-   :id       (get-in post [:id])
-   :type     :image
-   :username (get-in post [:user :username])})
+  {:url        (get-in post [:image_versions2 :candidates 0 :url])
+   :id         (get-in post [:id])
+   :type       :image
+   :image-path (str "out/" (:username post) "/" (:id post) ".jpeg")
+   :username   (get-in post [:user :username])})
 
 (defn extract-single [item]
   (let [media-type (:media_type item)]

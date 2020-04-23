@@ -38,7 +38,7 @@
       (is (= "instagram" (:source-name image)))
       (is (= "https://www.instagram.com" (:source-url image)))
       (is (= "maple.pepe_" (:profile-name image)))
-      (is (= "2019-12-10T17:28:26.000+0000" (:created-on image)))
+      (is (= "2019-12-10T17:28:26" (:created-on image)))
       (is (= "https://www.instagram.com/maple.pepe_" (:profile-url image)))
       (is (= "https://www.instagram.com/p/B55nmTWnDET" (:post-url image)))))
   (testing "extract single file carousel"
@@ -47,7 +47,7 @@
       (is (= "instagram" (:source-name carousel)))
       (is (= "https://www.instagram.com" (:source-url carousel)))
       (is (= "maple.pepe_" (:profile-name carousel)))
-      (is (= "2019-12-10T06:42:44.000+0000" (:created-on carousel)))
+      (is (= "2019-12-10T06:42:44" (:created-on carousel)))
       (is (= "https://www.instagram.com/maple.pepe_" (:profile-url carousel)))
       (is (= "https://www.instagram.com/p/B54dtEfANk-" (:post-url carousel)))))
   (testing "extract single file video"
@@ -55,7 +55,7 @@
       (is (= "instagram" (:source-name video)))
       (is (= "https://www.instagram.com" (:source-url video)))
       (is (= "baesuicide" (:profile-name video)))
-      (is (= "2017-04-28T22:06:38.000+0000" (:created-on video)))
+      (is (= "2017-04-28T22:06:38" (:created-on video)))
       (is (= "https://www.instagram.com/baesuicide" (:profile-url video)))
       (is (= "https://www.instagram.com/p/BTcffX1gw9V" (:post-url video)))
       (is (= :video (:type video)))))
