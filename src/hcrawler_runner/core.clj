@@ -17,39 +17,38 @@
                :profile-name (get-in post [:user :username])
                :profile-url  (str instagram-url "/" (get-in post [:user :username]))
                :source-name  "instagram"
+               :username     (get-in post [:user :username])
                :created-on   (convert-to-datetime (:taken_at post))
                :source-url   instagram-url}))
 
 (defn extract-video [post]
   {:url        (get-in post [:video_versions 0 :url])
    :id         (get-in post [:id])
-   :image-path (str "out/" (:username post) "/" (:id post) ".mp4")
-   :type       :video
-   :username   (get-in post [:user :username])})
+   :image-path (str "out/" (get-in post [:user :username]) "/" (:id post) ".mp4")
+   :type       :video})
 
 (defn extract-image [post]
   {:url        (get-in post [:image_versions2 :candidates 0 :url])
    :id         (get-in post [:id])
    :type       :image
-   :image-path (str "out/" (:username post) "/" (:id post) ".jpeg")
-   :username   (get-in post [:user :username])})
+   :image-path (str "out/" (get-in post [:user :username]) "/" (:id post) ".jpeg")})
 
 (defn extract-single [item]
   (let [media-type (:media_type item)]
     (case media-type
       1 (extract-image item)
-      2 (extract-video item))))
+      2 (extract-video item)
+      (println media-type))))
 
 (defn extract-carousel [post]
-  {:type     :carousel
-   :username (get-in post [:user :username])
-   :medias   (into-array (map extract-single (:carousel_media post)))})
+  (->> (:carousel_media post)
+       (map #(merge % {:user (:user post)}))
+       (map extract-single)))
 
 
 (defn extract-file [queue-item]
   (let [post (:post queue-item)
         media-type (:media_type post)]
-    (merge-metadata post
-                    (if (some (partial = media-type) [1 2])
-                      (extract-single post)
-                      (extract-carousel post)))))
+    (if (some (partial = media-type) [1 2])
+      [(merge-metadata post (extract-single post))]
+      (map #(merge-metadata post %) (extract-carousel post)))))

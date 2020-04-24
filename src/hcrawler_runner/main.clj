@@ -25,22 +25,10 @@
 (defn create-folder [username]
   (.mkdir (java.io.File. (str "out/" username))))
 
-(defn download-image [post]
-  (create-folder (:username post))
-  (copy (:url post)
-        (str "out/" (:username post) "/" (:id post) ".jpeg")))
-
-(defn download-video [post]
-  (create-folder (:username post))
-  (copy (:url post)
-        (str "out/" (:username post) "/" (:id post) ".mp4")))
-
 (defn download [post]
-  (case (:type post)
-    :image (download-image post)
-    :video (download-video post)
-    :carousel (doseq [media (:medias post)]
-                (download (assoc media :username (:username post))))))
+  (create-folder (:username post))
+  (copy (:url post)
+        (:image-path post)))
 
 (defn create-payload [post]
   {:body         (generate-string (dissoc post [:medias]) {:key-fn (fn [x] (csk/->camelCase (name x)))})
@@ -49,19 +37,17 @@
 (defn request [post]
   (try
     (if (= http-enable "true")
-      (if (some (partial = (:type post)) [:video :image])
-        (client/post service-host (create-payload post))
-        (doseq [media (:medias post)]
-          (client/post service-host (create-payload (merge post media))))))
+      (client/post service-host (create-payload post)))
     (catch Exception e
       (println e))))
 
 (defn in [ch {:keys [content-type delivery-tag type] :as meta} ^bytes payload]
   (let [json-str (String. payload "UTF-8")
         queue-item (json/read-str json-str :key-fn keyword)
-        file-desc (extract-file queue-item)]
-    (download file-desc)
-    (request file-desc)))
+        file-descs (extract-file queue-item)]
+    (doseq [file-desc file-descs]
+      (download file-desc)
+      (request file-desc))))
 
 (defn wrap_int [in]
   (let [conn (rmq/connect {:host rabbit-host})
