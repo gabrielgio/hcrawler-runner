@@ -13,7 +13,7 @@
     (.format format datetime)))
 
 (defn merge-metadata [post data]
-  (merge data {:post-url     (str instagram-url "/p/" (:code post))
+  (merge data {:image-url     (str instagram-url "/p/" (:code post))
                :profile-name (get-in post [:user :username])
                :profile-url  (str instagram-url "/" (get-in post [:user :username]))
                :source-name  "instagram"
@@ -24,14 +24,14 @@
 (defn extract-video [post]
   {:url        (get-in post [:video_versions 0 :url])
    :id         (get-in post [:id])
-   :image-path (str "out/" (get-in post [:user :username]) "/" (:id post) ".mp4")
+   :image-path (str  (get-in post [:user :username]) "/" (:id post) ".mp4")
    :type       :video})
 
 (defn extract-image [post]
   {:url        (get-in post [:image_versions2 :candidates 0 :url])
    :id         (get-in post [:id])
    :type       :image
-   :image-path (str "out/" (get-in post [:user :username]) "/" (:id post) ".jpeg")})
+   :image-path (str  (get-in post [:user :username]) "/" (:id post) ".jpeg")})
 
 (defn extract-single [item]
   (let [media-type (:media_type item)]

@@ -23,15 +23,19 @@
       (io/copy in out))))
 
 (defn create-folder [username]
+  (.mkdir (java.io.File. "out/"))
   (.mkdir (java.io.File. (str "out/" username))))
 
 (defn download [post]
   (create-folder (:username post))
   (copy (:url post)
-        (:image-path post)))
+        (str "out/" (:image-path post))))
+
+(defn camel-casefy [x]
+  (csk/->camelCase (name x)))
 
 (defn create-payload [post]
-  {:body         (generate-string (dissoc post [:medias]) {:key-fn (fn [x] (csk/->camelCase (name x)))})
+  {:body         (generate-string post {:key-fn camel-casefy})
    :content-type :json})
 
 (defn request [post]
